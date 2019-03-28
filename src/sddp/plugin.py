@@ -41,14 +41,14 @@ class DingTalkPlugin(NotifyPlugin):
     def notify_users(self, group, event, fail_silently=False):
         access_token = self.get_option('access_token', group.project)
         send_url = DingTalk_API.format(token=access_token)
-        title = event.project.name
+        title = "项目{}报错".format(event.project.name)
         message = event.message
         event_url = "{0}events/{1}/".format(group.get_absolute_url(), event.id)
         data = {
             "msgtype": "markdown",
             "markdown": {
-                "title": "项目{title}报错",
-                "text": "> {message} \n [点击查看问题]({event_url})".format(
+                "title": title,
+                "text": "#### {title} \n > {message} \n [点击查看问题]({event_url})".format(
                     title=title,
                     message=message,
                     event_url=event_url,

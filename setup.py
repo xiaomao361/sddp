@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="sddp",
-    version='0.1.3',
+    version='0.1.6',
     author='zhouwei',
     author_email='xiaomao361@163.com',
     url='https://github.com/xiaomao361/sddp',
