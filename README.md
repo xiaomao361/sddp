@@ -9,7 +9,7 @@ sentry ding ding plugin
 
 ```
 redis-py-cluster==1.3.4
-sddp==0.1.6
+sddp==0.1.7
 ```
 
 2. 构建并重启sentry
