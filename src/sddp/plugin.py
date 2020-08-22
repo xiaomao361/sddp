@@ -1,10 +1,11 @@
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 import requests
 from django import forms
-from sentry.plugins.bases.notify import NotifyPlugin
+from sentry.plugins.bases.notify import NotificationPlugin
 import sddp
-import json
 import sys
 
 reload(sys)
@@ -20,7 +21,7 @@ class AccessTokenForm(forms.Form):
     )
 
 
-class DingTalkPlugin(NotifyPlugin):
+class DingTalkPlugin(NotificationPlugin):
     author = 'zhouwei'
     author_url = 'https://github.com/xiaomao361/sddp'
     version = sddp.VERSION
@@ -38,25 +39,42 @@ class DingTalkPlugin(NotifyPlugin):
     def is_configured(self, project):
         return bool(self.get_option('access_token', project))
 
-    def notify_users(self, group, event, fail_silently=False):
-        access_token = self.get_option('access_token', group.project)
-        send_url = DingTalk_API.format(token=access_token)
-        title = "项目{}报错".format(event.project.name)
-        message = event.message
-        event_url = "{0}events/{1}/".format(group.get_absolute_url(), event.id)
+    def notify_users(self, group, event, *args, **kwargs):
+        if not self.is_configured(group.project):
+            self.logger.info('dingtalk token config error')
+            return None
+
+        if self.should_notify(group, event):
+            self.logger.info('send msg to dingtalk yes')
+            self.send_msg(group, event, *args, **kwargs)
+        else:
+            self.logger.info('send msg to dingtalk no')
+            return None
+
+    def send_msg(self, group, event, *args, **kwargs):
+        del args, kwargs
+
+        error_title = u'项目【%s】报错' % event.project.slug
+
         data = {
-            "msgtype": "markdown",
+            "msgtype": 'markdown',
             "markdown": {
-                "title": title,
-                "text": "#### {title} \n > {message} \n [点击查看问题]({event_url})".format(
-                    title=title,
-                    message=message,
-                    event_url=event_url,
-                ),
-            },
+                "title": error_title,
+                "text": u'#### {title} \n\n > {message} \n\n [点击查看问题]({url})'.format(
+                    title=error_title,
+                    message=event.message,
+                    url=u'{url}events/{id}/'.format(
+                        url=group.get_absolute_url(),
+                        id=event.event_id if hasattr(event, 'event_id') else event.id
+                    ),
+                )
+            }
         }
+
         requests.post(
-            url=send_url,
-            headers={"Content-Type": "application/json"},
-            data=json.dumps(data).encode("utf-8")
+            url=DingTalk_API.format(token=self.get_option('access_token', group.project)),
+            headers={
+                'Content-Type': 'application/json'
+            },
+            data=json.dumps(data).encode('utf-8')
         )
