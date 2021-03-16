@@ -6,10 +6,6 @@ import requests
 from django import forms
 from sentry.plugins.bases.notify import NotificationPlugin
 import sddp
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 DingTalk_API = "https://oapi.dingtalk.com/robot/send?access_token={token}"
 

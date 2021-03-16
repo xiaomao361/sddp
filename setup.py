@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="sddp",
-    version='0.2.4',
+    version='0.2.6',
     author='zhouwei',
     author_email='xiaomao361@163.com',
     url='https://github.com/xiaomao361/sddp',
@@ -15,7 +15,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     install_requires=[
-        'sentry>=9.0.0',
+        'sentry>10.0.1',
         'requests',
     ],
     entry_points={
