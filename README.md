@@ -1,5 +1,3 @@
-sentry ding ding plugin
-===
 
 [sentry-onpremise](https://github.com/getsentry/onpremise)使用的钉钉插件
 
