@@ -10,7 +10,7 @@ sentry ding ding plugin
 添加下面内容
 
 ```
-sddp=0.2.6
+sddp==0.2.6
 ```
 
 2. 构建并重启sentry
